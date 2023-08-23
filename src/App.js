@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import { Suspense, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./components/homePage.js";
+import Loading from "./components/loading.js";
 
-function App() {
+const AboutPage = lazy(() => delayForDemo(import("./components/aboutPage.js")));
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Suspense fallback={<Loading />}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+    </Suspense>
   );
 }
 
-export default App;
+// Add a fixed delay so you can see the loading state
+function delayForDemo(promise) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 2000);
+  }).then(() => promise);
+}
